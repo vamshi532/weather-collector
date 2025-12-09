@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-\"\"\"Weather Data Collector
+"""Weather Data Collector
 Fetches current weather for configured cities from OpenWeather (Current Weather API),
 creates a timestamped JSON and uploads to S3.
-\"\"\"
+"""
 
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 import requests
 import boto3
 from botocore.exceptions import ClientError
@@ -52,8 +52,8 @@ def fetch_weather(city):
         data = resp.json()
         result = {
             "city": city,
-            "timestamp": datetime.utcnow().isoformat() + "Z",
-            "temp_f": data.get("main", {}).get("temp"),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "temp_f": data.get("main", {}).get("temp"), # type: ignore
             "humidity": data.get("main", {}).get("humidity"),
             "conditions": data.get("weather", [{}])[0].get("description"),
             "raw": data
@@ -77,7 +77,7 @@ def main():
         print("No cities specified. Set CITIES in env or provide src/cities.txt")
         return
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     date_prefix = now.strftime("%Y/%m/%d")
     for city in cities:
         record = fetch_weather(city)
