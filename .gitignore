@@ -1,0 +1,9 @@
+venv/
+.env
+__pycache__/
+*.pyc
+*.log
+.idea/
+.vscode/
+terraform/.terraform
+terraform/terraform.tfstate*
